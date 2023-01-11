@@ -1,4 +1,4 @@
-@IsTest (IsParallel = true)
+@IsTest(IsParallel=true)
 private class ExampleController_TEST {
 
     @IsTest
@@ -26,7 +26,7 @@ private class ExampleController_TEST {
             .getDiscount(oppId);
         ((ExampleService) mocks.captureArguments(serviceMock))
             .getDiscount(null);
-        System.assertEquals(oppId, mocks.getArgument(0));
+        System.assertEquals(oppId, mocks.getArguments()[0]);
 
     }
 
@@ -39,7 +39,7 @@ private class ExampleController_TEST {
         Id oppId = ApexMocksUtils.generateId(Opportunity.SObjectType);
 
         mocks.startStubbing();
-        mocks.when(serviceMock.getDiscount(oppId)).thenThrow(new CalloutException('Something went wrong'));
+        ((ExampleService) mocks.throwWhen(new CalloutException('Something went wrong'), serviceMock)).getDiscount(oppId);
         mocks.stopStubbing();
 
         Application.service.setMock(ExampleService.class, serviceMock);
