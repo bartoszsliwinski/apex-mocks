@@ -13,8 +13,10 @@ public inherited sharing class ApexMocks implements System.StubProvider {
     private Boolean isMatchAnyArguments = false;
     private Boolean isVerifying = false;
     private Boolean isCapturing = false;
+    private Boolean isPreparingExceptionThrow = false;
     private StubResponse currentStubResponse;
     private Integer currentExpectedCallCount;
+    private Exception currentExceptionToThrow;
 
     /**
      * Creates mock object of given class or interface.
@@ -39,6 +41,12 @@ public inherited sharing class ApexMocks implements System.StubProvider {
         return currentStubResponse;
     }
 
+    public Object throwWhen(Exception ex, Object stubbedObject) {
+        isPreparingExceptionThrow = true;
+        currentExceptionToThrow = ex;
+        return stubbedObject;
+    }
+
     public ArgumentMatcher matchAny() {
         isMatchAnyArguments = true;
         return new ArgumentMatcher(this);
@@ -54,12 +62,9 @@ public inherited sharing class ApexMocks implements System.StubProvider {
         return stubbedObject;
     }
 
-    public Object getArgument(Integer argumentIndex) {
-        return currentStubResponse.listOfArgs[argumentIndex];
-    }
-
-    public void stopCapturing() {
+    public List<Object> getArguments() {
         this.isCapturing = false;
+        return currentStubResponse.listOfArgs;
     }
 
     /**
@@ -85,6 +90,10 @@ public inherited sharing class ApexMocks implements System.StubProvider {
         createOrChooseStubResponse(stubbedObject, stubbedMethodName, listOfArgs);
         String methodSignature = currentStubResponse.methodSignature;
         if (isStubbing) {
+            if (isPreparingExceptionThrow) {
+                currentStubResponse.setExceptionToThrow(currentExceptionToThrow);
+                isPreparingExceptionThrow = false;
+            }
             return null;
         }
         else if (isVerifying) {
@@ -130,7 +139,7 @@ public inherited sharing class ApexMocks implements System.StubProvider {
     }
 
     private void verify(String methodSignature) {
-        System.assertEquals(currentExpectedCallCount,
+        Assert.areEqual(currentExpectedCallCount,
             methodSignature2StubResponse.get(methodSignature).callCount,
             String.format('Wrong number of method calls for {0} method.', new List<String> {
                 methodSignature
@@ -180,6 +189,10 @@ public inherited sharing class ApexMocks implements System.StubProvider {
         }
 
         public void thenThrow(Exception exceptionToThrow) {
+            setExceptionToThrow(exceptionToThrow);
+        }
+
+        private void setExceptionToThrow(Exception exceptionToThrow) {
             if (response != null) {
                 throw new MockingException(MSG_RESPONSE_OR_EXCEPTION);
             }
@@ -203,6 +216,10 @@ public inherited sharing class ApexMocks implements System.StubProvider {
 
         public StubResponse when(Object mock) {
             return mocks.when(mock);
+        }
+
+        public Object throwWhen(Exception ex, Object stubbedObject) {
+            return mocks.throwWhen(ex, stubbedObject);
         }
 
         public Object verify(Object stubbedObject, Integer callCount) {
