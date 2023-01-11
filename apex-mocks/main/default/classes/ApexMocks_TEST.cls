@@ -1,7 +1,7 @@
 /**
  * Test class for ApexMocks
  *
- * @author Bartosz Sliwinski (bsliwinski@deloittece.com)
+ * @author Bartosz Sliwinski
  * @date September 2022
  */
 @IsTest(IsParallel=true)
@@ -13,27 +13,27 @@ public with sharing class ApexMocks_TEST {
         ApexMocks mocks = new ApexMocks();
         ApexMocks_TestServiceClass service = (ApexMocks_TestServiceClass) mocks.mock(ApexMocks_TestServiceClass.class);
 
-        String arg1 = 'asdf';
-        Integer arg2 = 123;
+        String argument1 = 'asdf';
+        Integer argument2 = 123;
         Decimal expectedResponse = 30.2;
 
         mocks.startStubbing();
-        mocks.when(service.nonVoidMethod(arg1, arg2)).thenReturn(expectedResponse);
+        mocks.when(service.nonVoidMethod(argument1, argument2)).thenReturn(expectedResponse);
         mocks.stopStubbing();
 
         // When
         Test.startTest();
-        Object response = service.nonVoidMethod(arg1, arg2);
+        Object response = service.nonVoidMethod(argument1, argument2);
         Test.stopTest();
 
         // Then
-        System.assertEquals(expectedResponse, response);
+        Assert.areEqual(expectedResponse, response);
         ((ApexMocks_TestServiceClass) mocks.verify(service, 1))
-            .nonVoidMethod(arg1, arg2);
+            .nonVoidMethod(argument1, argument2);
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .nonVoidMethod(null, null);
-        System.assertEquals(arg1, mocks.getArgument(0));
-        System.assertEquals(arg2, mocks.getArgument(1));
+        Assert.areEqual(argument1, mocks.getArguments()[0]);
+        Assert.areEqual(argument2, mocks.getArguments()[1]);
     }
 
     @IsTest
@@ -42,31 +42,31 @@ public with sharing class ApexMocks_TEST {
         ApexMocks mocks = new ApexMocks();
         ApexMocks_TestServiceClass service = (ApexMocks_TestServiceClass) mocks.mock(ApexMocks_TestServiceClass.class);
 
-        String arg1 = 'asdf';
-        Integer arg2 = 123;
+        String argument1 = 'asdf';
+        Integer argument2 = 123;
         Decimal expectedResponse = 30.2;
 
         mocks.startStubbing();
-        mocks.when(service.nonVoidMethod(arg1, arg2)).thenReturn(expectedResponse);
+        mocks.when(service.nonVoidMethod(argument1, argument2)).thenReturn(expectedResponse);
         mocks.stopStubbing();
 
-        Integer actualArg1 = 1243123;
-        String actualArg2 = 'dawdwa';
+        Integer actualArgument1 = 1243123;
+        String actualArgument2 = 'dawdwa';
 
         // When
         Test.startTest();
-        Object response = service.nonVoidMethod(actualArg1, actualArg2);
+        Object response = service.nonVoidMethod(actualArgument1, actualArgument2);
         Test.stopTest();
 
         // Then
-        System.assertNotEquals(expectedResponse, response);
-        System.assertEquals(null, response);
+        Assert.areNotEqual(expectedResponse, response);
+        Assert.areEqual(null, response);
         ((ApexMocks_TestServiceClass) mocks.verify(service, 0))
-            .nonVoidMethod(arg1, arg2);
+            .nonVoidMethod(argument1, argument2);
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .nonVoidMethod(null, null);
-        System.assertEquals(actualArg1, (Integer) mocks.getArgument(0));
-        System.assertEquals(actualArg2, (String) mocks.getArgument(1));
+        Assert.areEqual(actualArgument1, (Integer) mocks.getArguments()[0]);
+        Assert.areEqual(actualArgument2, (String) mocks.getArguments()[1]);
     }
 
     @IsTest
@@ -81,22 +81,22 @@ public with sharing class ApexMocks_TEST {
         mocks.matchAny().when(service.nonVoidMethod(null, null)).thenReturn(expectedResponse);
         mocks.stopStubbing();
 
-        String actualArg1 = '321321321';
-        Integer actualArg2 = 2321321;
+        String actualArgument1 = '321321321';
+        Integer actualArgument2 = 2321321;
 
         // When
         Test.startTest();
-        Object response = service.nonVoidMethod(actualArg1, actualArg2);
+        Object response = service.nonVoidMethod(actualArgument1, actualArgument2);
         Test.stopTest();
 
         // Then
-        System.assertEquals(expectedResponse, response);
+        Assert.areEqual(expectedResponse, response);
         ((ApexMocks_TestServiceClass) mocks.verify(service, 1))
             .nonVoidMethod('dwadwa', 124433);
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .nonVoidMethod(null, null);
-        System.assertEquals(actualArg1, (String) mocks.getArgument(0));
-        System.assertEquals(actualArg2, (Integer) mocks.getArgument(1));
+        Assert.areEqual(actualArgument1, (String) mocks.getArguments()[0]);
+        Assert.areEqual(actualArgument2, (Integer) mocks.getArguments()[1]);
     }
 
     @IsTest
@@ -117,7 +117,7 @@ public with sharing class ApexMocks_TEST {
             .voidMethod('dwadwa');
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .voidMethod(null);
-        System.assertEquals(actualArg, (String) mocks.getArgument(0));
+        Assert.areEqual(actualArg, (String) mocks.getArguments()[0]);
     }
 
     @IsTest
@@ -126,25 +126,60 @@ public with sharing class ApexMocks_TEST {
         ApexMocks mocks = new ApexMocks();
         ApexMocks_TestServiceClass service = (ApexMocks_TestServiceClass) mocks.mock(ApexMocks_TestServiceClass.class);
 
-        String arg1 = 'asdf';
-        Integer arg2 = 123;
+        String argument1 = 'asdf';
+        Integer argument2 = 123;
+
+        String expectedExceptionMessage = 'an exception';
 
         mocks.startStubbing();
-        mocks.when(service.nonVoidMethod(arg1, arg2)).thenThrow(new DmlException('an exception'));
+        ((ApexMocks_TestServiceClass) mocks.throwWhen(new DmlException(expectedExceptionMessage), service)).nonVoidMethod(argument1, argument2);
         mocks.stopStubbing();
 
         // When
         Test.startTest();
         Exception ex;
         try {
-            service.nonVoidMethod(arg1, arg2);
+            service.nonVoidMethod(argument1, argument2);
         } catch (Exception e) {
             ex = e;
         }
         Test.stopTest();
 
         // Then
-        System.assertNotEquals(null, ex);
+        Assert.isNotNull(ex);
+        Assert.isInstanceOfType(ex, DmlException.class);
+        Assert.areEqual(expectedExceptionMessage, ex.getMessage());
+    }
+
+    @IsTest
+    static void shouldThrowException_whenAnyMatchChosen() {
+        // Given
+        ApexMocks mocks = new ApexMocks();
+        ApexMocks_TestServiceClass service = (ApexMocks_TestServiceClass) mocks.mock(ApexMocks_TestServiceClass.class);
+
+        String argument1 = 'asdf';
+        Integer argument2 = 123;
+
+        String expectedExceptionMessage = 'an exception';
+
+        mocks.startStubbing();
+        ((ApexMocks_TestServiceClass) mocks.matchAny().throwWhen(new DmlException(expectedExceptionMessage), service)).nonVoidMethod(argument1, argument2);
+        mocks.stopStubbing();
+
+        // When
+        Test.startTest();
+        Exception ex;
+        try {
+            service.nonVoidMethod(argument2, argument1);
+        } catch (Exception e) {
+            ex = e;
+        }
+        Test.stopTest();
+
+        // Then
+        Assert.isNotNull(ex);
+        Assert.isInstanceOfType(ex, DmlException.class);
+        Assert.areEqual(expectedExceptionMessage, ex.getMessage());
     }
 
 }
