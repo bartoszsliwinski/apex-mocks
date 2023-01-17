@@ -57,12 +57,17 @@ public inherited sharing class ApexMocks implements System.StubProvider {
         currentExpectedCallCount = callCount;
         return stubbedObject;
     }
+
     public Object captureArguments(Object stubbedObject) {
         isCapturing = true;
         return stubbedObject;
     }
 
     public List<Object> getArguments() {
+        if (!this.isCapturing) {
+            throw new MockingException('"getArguments" should be fired only once, immediately after "captureArguments". ' +
+                'Save results to a variable if more arguments have to be captured.');
+        }
         this.isCapturing = false;
         return currentStubResponse.listOfArgs;
     }
@@ -83,6 +88,9 @@ public inherited sharing class ApexMocks implements System.StubProvider {
     }
 
     public Object mockMethod(Object stubbedObject, String stubbedMethodName, List<Object> listOfArgs) {
+        if (isMoreThanOneModeEnabled()) {
+            throw new MockingException('Only one mode (stubbing|capturing|verifying) can be enabled at once.');
+        }
         if (isCapturing) {
             prepareForCapture(stubbedObject, stubbedMethodName);
             return null;
@@ -103,6 +111,14 @@ public inherited sharing class ApexMocks implements System.StubProvider {
         else {
             return respond(listOfArgs);
         }
+    }
+
+    private Boolean isMoreThanOneModeEnabled() {
+        Integer modesEnabled = 0;
+        modesEnabled += isCapturing ? 1 : 0;
+        modesEnabled += isStubbing ? 1 : 0;
+        modesEnabled += isVerifying ? 1 : 0;
+        return modesEnabled > 1;
     }
 
     private void prepareForCapture(Object stubbedObject, String stubbedMethodName) {
