@@ -1,7 +1,7 @@
 /**
  * Test class for ApexMocks
  *
- * @author Bartosz Sliwinski
+ * @author Bartosz Sliwinski (bsliwinski@deloittece.com)
  * @date September 2022
  */
 @IsTest(IsParallel=true)
@@ -32,8 +32,9 @@ public with sharing class ApexMocks_TEST {
             .nonVoidMethod(argument1, argument2);
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .nonVoidMethod(null, null);
-        Assert.areEqual(argument1, mocks.getArguments()[0]);
-        Assert.areEqual(argument2, mocks.getArguments()[1]);
+        List<Object> arguments = mocks.getArguments();
+        Assert.areEqual(argument1, arguments[0]);
+        Assert.areEqual(argument2, arguments[1]);
     }
 
     @IsTest
@@ -65,8 +66,9 @@ public with sharing class ApexMocks_TEST {
             .nonVoidMethod(argument1, argument2);
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .nonVoidMethod(null, null);
-        Assert.areEqual(actualArgument1, (Integer) mocks.getArguments()[0]);
-        Assert.areEqual(actualArgument2, (String) mocks.getArguments()[1]);
+        List<Object> arguments = mocks.getArguments();
+        Assert.areEqual(actualArgument1, (Integer) arguments[0]);
+        Assert.areEqual(actualArgument2, (String) arguments[1]);
     }
 
     @IsTest
@@ -95,8 +97,9 @@ public with sharing class ApexMocks_TEST {
             .nonVoidMethod('dwadwa', 124433);
         ((ApexMocks_TestServiceClass) mocks.captureArguments(service))
             .nonVoidMethod(null, null);
-        Assert.areEqual(actualArgument1, (String) mocks.getArguments()[0]);
-        Assert.areEqual(actualArgument2, (Integer) mocks.getArguments()[1]);
+        List<Object> arguments = mocks.getArguments();
+        Assert.areEqual(actualArgument1, (String) arguments[0]);
+        Assert.areEqual(actualArgument2, (Integer) arguments[1]);
     }
 
     @IsTest
