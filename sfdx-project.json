@@ -1,12 +1,12 @@
 {
   "packageDirectories": [
     {
-      "path": "force-app",
+      "path": "apex-mocks",
       "default": true
     }
   ],
   "name": "apex-mocks",
   "namespace": "",
   "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "58.0"
+  "sourceApiVersion": "61.0"
 }

@@ -2,7 +2,7 @@
  * Stores information about all Selectors, Services
  * and UnitOfWork-related SObjects.
  *
- * @author Bartosz Sliwinski (bsliwinski@deloittece.com)
+ * @author Bartosz Sliwinski (bartosz.j.sliwinski@gmail.com)
  * @date September 2022
  */
 public with sharing class Application {

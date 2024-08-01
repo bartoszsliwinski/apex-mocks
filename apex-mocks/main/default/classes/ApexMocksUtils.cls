@@ -2,7 +2,7 @@
  * Provides various mocking-related utilities.
  * Simplified version off fflib_ApexMocksUtils
  *
- * @author Bartosz Sliwinski (bsliwinski@deloittece.com)
+ * @author Bartosz Sliwinski (bartosz.j.sliwinski@gmail.com)
  * @date November 2020
  */
 @IsTest

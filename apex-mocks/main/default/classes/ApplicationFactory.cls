@@ -1,7 +1,7 @@
 /**
  * Simplified version of fflib_Application
  *
- * @author Bartosz Sliwinski (bsliwinski@deloittece.com)
+ * @author Bartosz Sliwinski (bartosz.j.sliwinski@gmail.com)
  * @date September 2022
  */
 public with sharing class ApplicationFactory {

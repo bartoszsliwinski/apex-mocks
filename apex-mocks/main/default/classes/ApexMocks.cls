@@ -244,6 +244,4 @@ public inherited sharing class ApexMocks implements System.StubProvider {
 
     }
 
-    public class MockingException extends Exception {}
-
 }
