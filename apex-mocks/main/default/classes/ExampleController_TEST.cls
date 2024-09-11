@@ -21,12 +21,12 @@ private class ExampleController_TEST {
         Test.stopTest();
 
         // Then
-        System.assertEquals(8, calculatedOpp.Amount);
+        Assert.areEqual(8, calculatedOpp.Amount);
         ((ExampleService) mocks.verify(serviceMock, 1))
             .getDiscount(oppId);
         ((ExampleService) mocks.captureArguments(serviceMock))
             .getDiscount(null);
-        System.assertEquals(oppId, mocks.getArguments()[0]);
+        Assert.areEqual(oppId, mocks.getArguments()[0]);
 
     }
 
@@ -57,8 +57,8 @@ private class ExampleController_TEST {
         Test.stopTest();
 
         // Then
-        System.assertNotEquals(null, ex);
-        System.assert(ex instanceof AuraHandledException);
+        Assert.isNotNull(ex);
+        Assert.isInstanceOfType(ex, AuraHandledException.class);
 
     }
 
